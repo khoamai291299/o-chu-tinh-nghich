@@ -40,9 +40,10 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
 
   useEffect(() => {
     const h = (e) => {
-      if (e.target.closest?.('button') && (e.key === 'Enter' || e.key === ' ')) return;
+      if (e.target.closest?.('button') && e.key === 'Enter') return;
       const k = e.key.toLowerCase();
-      if (e.key === ' ') { e.preventDefault(); stop(); }
+      if (e.key === ' ') { e.preventDefault(); if (!e.repeat) { document.activeElement?.blur?.(); stop(); } return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (k === 'd') right();
       if (k === 's') wrong();
       if (k === 'a') setPeek((p) => !p);

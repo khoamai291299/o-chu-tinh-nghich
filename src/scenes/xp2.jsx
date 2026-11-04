@@ -40,7 +40,7 @@ export function VeRanChan({ running }) {
 /* ===== 7. Đàn gảy tai trâu: người gảy đàn, con trâu vẫn thản nhiên gặm cỏ ===== */
 export function DanTaiTrau({ running }) {
   const ref = useScene(running, (tl) => {
-    tl.to('.dt-bhead', { rotation: 16, duration: 0.9, yoyo: true, repeat: 7, ease: 'sine.inOut', transformOrigin: '20% 80%' }, 0);
+    tl.to('.dt-buf .bhead', { rotation: 16, duration: 0.9, yoyo: true, repeat: 7, ease: 'sine.inOut', transformOrigin: '20% 80%' }, 0);
     tl.to('.dt-buf .tail', { rotation: 14, duration: 0.5, yoyo: true, repeat: 15, ease: 'sine.inOut', transformOrigin: '0% 0%' }, 0);
     tl.to('.dt-strum', { rotation: 10, duration: 0.18, yoyo: true, repeat: 41, transformOrigin: '50% 50%' }, 0);
     tl.to('.dt-note', { keyframes: [{ x: 0, y: 0, opacity: 0, duration: 0 }, { x: 10, y: -8, opacity: 1, duration: 0.35 }, { x: 28, y: -14, opacity: 1, duration: 0.9, ease: 'none' }, { x: 40, y: -10, opacity: 0, duration: 0.5 }], duration: 1.75, repeat: 3, repeatDelay: 0.5, stagger: 0.55 }, 0.4);

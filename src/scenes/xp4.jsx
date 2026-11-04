@@ -8,7 +8,7 @@ export function ThuanBuom({ running }) {
   const ref = useScene(running, (tl) => {
     tl.fromTo('.tb-boat', { x: -30 }, { x: 70, duration: 7, ease: 'none' }, 0);
     tl.to('.tb-bob', { rotation: 3, y: 1.2, duration: 0.8, yoyo: true, repeat: 8, ease: 'sine.inOut', transformOrigin: '50% 100%' }, 0);
-    tl.to('.tb-sail', { scaleX: 1.08, duration: 0.6, yoyo: true, repeat: 11, ease: 'sine.inOut', transformOrigin: '0% 50%' }, 0);
+    tl.to('.tb-bob .sail', { scaleX: 1.08, duration: 0.6, yoyo: true, repeat: 11, ease: 'sine.inOut', transformOrigin: '0% 50%' }, 0);
     tl.to('.tb-w1', { x: -16, duration: 0.9, repeat: 7, ease: 'none' }, 0);
     tl.to('.tb-w2', { x: -22, duration: 1.3, repeat: 5, ease: 'none' }, 0);
     tl.fromTo('.tb-wind', { x: -10, opacity: 0 }, { x: 40, opacity: 1, duration: 1.4, stagger: 0.35, repeat: 3, ease: 'none' }, 0);

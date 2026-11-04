@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, Typography } from 'antd';
+import { Button, Popconfirm, Typography } from 'antd';
 import { ArrowRightOutlined, FolderOpenOutlined, DeleteOutlined, BellFilled, EditOutlined, EyeOutlined, GiftOutlined, PauseCircleFilled, StarFilled } from '@ant-design/icons';
 import { sfx } from '../utils/sound.js';
 import { fmtTime, readFile } from '../utils/save.js';
@@ -84,7 +84,9 @@ export default function Intro({ onNext, saved, onResume, onDiscard, xpSaved = nu
             <span>{xpSaved ? `Có ván đang chơi dở: ${xpSaved.done.size}/${XP_TOTAL} hộp quà đã mở, lưu lúc ${fmtTime(xpSaved.savedAt)}.` : `${XP_TOTAL} hộp quà, từ vựng dễ hơn. Không chia đội, cả lớp xung phong đoán.`}</span>
           </div>
           {xpSaved && <Button type="primary" size="large" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => { sfx.open(); onResumeXp(xpSaved); }}>Chơi tiếp</Button>}
-          <Button size="large" onClick={() => { sfx.open(); onStartXp(); }}>{xpSaved ? 'Ván mới' : 'Xung phong'}</Button>
+          {xpSaved
+            ? <Popconfirm title="Bắt đầu ván mới?" description="Ván Xung phong đang lưu sẽ bị ghi đè." okText="Ván mới" cancelText="Giữ ván cũ" onConfirm={() => { sfx.open(); onStartXp(); }}><Button size="large">Ván mới</Button></Popconfirm>
+            : <Button size="large" onClick={() => { sfx.open(); onStartXp(); }}>Xung phong</Button>}
           {xpSaved && <Button type="text" icon={<DeleteOutlined />} onClick={onDiscardXp} aria-label="Bỏ ván Xung phong đã lưu" title="Bỏ ván đã lưu" />}
         </motion.div>
       </div>
