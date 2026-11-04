@@ -53,7 +53,7 @@ export const Svg = forwardRef(function Svg({ children, ...p }, ref) {
  * running = false (đồng hồ dừng, đội đang trả lời...) thì hoạt hình cũng dừng theo.
  * Mẫu kịch bản: 0-5 giây hình đánh lừa, 5-12 giây chi tiết khóa hiện ra.
  */
-export function useScene(running, build) {
+export function useScene(running, build, opts = {}) {
   const ref = useRef(null);
   const tl = useRef(null);
   useLayoutEffect(() => {
@@ -61,9 +61,17 @@ export function useScene(running, build) {
       const t = gsap.timeline({ paused: true });
       build(t);
       // Lặp lại cảnh sau khi diễn xong để học sinh kịp nhìn kỹ chi tiết.
-      let end = 0;
-      t.getChildren(false, true, true).forEach((c) => { if (c.totalDuration() <= 14) end = Math.max(end, c.endTime()); });
-      const loopAt = Math.min(20, Math.max(12, end + 2.5));
+      // opts.loop (giây, tối thiểu 5): cảnh ngắn của chế độ Xung phong tự chọn mốc lặp.
+      let loopAt;
+      if (opts.loop !== undefined) {
+        if (opts.loop < 5) throw new Error('Cảnh phải lặp tối thiểu 5 giây');
+        loopAt = opts.loop;
+        if (ref.current) ref.current.dataset.loop = String(loopAt);
+      } else {
+        let end = 0;
+        t.getChildren(false, true, true).forEach((c) => { if (c.totalDuration() <= 14) end = Math.max(end, c.endTime()); });
+        loopAt = Math.min(20, Math.max(12, end + 2.5));
+      }
       t.call(() => t.seek(0), null, loopAt);
       tl.current = t;
       t.play(0);
