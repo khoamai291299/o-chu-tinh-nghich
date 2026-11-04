@@ -9,6 +9,11 @@ import Board from './components/Board.jsx';
 import Play from './components/Play.jsx';
 import Final from './components/Final.jsx';
 import Draw from './components/Draw.jsx';
+import XpBoard from './components/XpBoard.jsx';
+import XpPlay from './components/XpPlay.jsx';
+import XpEnd from './components/XpEnd.jsx';
+import { XP_QUESTIONS, XP_TOTAL } from './data/xpQuestions.js';
+import { clearXpSave, downloadXpSave, readXpSave, writeXpSave } from './utils/xpSave.js';
 import { QUESTIONS, SAMPLE } from './data/questions.js';
 import { AVATAR_KINDS } from './data/constants.js';
 import { isMuted, setMuted } from './utils/sound.js';
@@ -19,6 +24,8 @@ const initTeams = () => AVATAR_KINDS.slice(0, 4).map((a, i) => ({ id: i, name: `
 
 // Xem nhanh một câu: thêm ?cau=7 vào địa chỉ (dùng để kiểm tra hoạt ảnh)
 const DEMO = Number(new URLSearchParams(window.location.search).get('cau')) || 0;
+// Xem nhanh một cảnh của chế độ Xung phong, không tính giờ: ?xp=7
+const DEMO_XP = Number(new URLSearchParams(window.location.search).get('xp')) || 0;
 
 const THEME = {
   algorithm: theme.darkAlgorithm,
@@ -48,7 +55,7 @@ const page = {
 };
 
 export default function App() {
-  const [phase, setPhase] = useState(DEMO ? 'play' : 'intro');
+  const [phase, setPhase] = useState(DEMO ? 'play' : DEMO_XP ? 'xpplay' : 'intro');
   const [teams, setTeams] = useState(initTeams);
   const [order, setOrder] = useState(() => QUESTIONS);
   const [done, setDone] = useState(() => new Set());
@@ -59,6 +66,13 @@ export default function App() {
   const [turnOrder, setTurnOrder] = useState(null); // thứ tự id đội chọn quà đã bốc thăm
   const [saved, setSaved] = useState(() => (DEMO ? null : readSave())); // ván lưu từ lần trước
   const [savedAt, setSavedAt] = useState(null);
+  // chế độ Xung phong: tách riêng hoàn toàn khỏi ván 4 đội
+  const [xpOrder, setXpOrder] = useState(() => XP_QUESTIONS);
+  const [xpDone, setXpDone] = useState(() => new Set());
+  const [xpResults, setXpResults] = useState({});
+  const [xpCur, setXpCur] = useState(DEMO_XP ? DEMO_XP - 1 : null);
+  const [xpSaved, setXpSaved] = useState(() => (DEMO || DEMO_XP ? null : readXpSave()));
+  const [xpSavedAt, setXpSavedAt] = useState(null);
   const [muted, setM] = useState(isMuted());
   const [full, setFull] = useState(false);
 
@@ -69,6 +83,21 @@ export default function App() {
     if (phase === 'board') { if (writeSave(state)) setSavedAt(Date.now()); }
     else if (phase === 'final') { clearSave(); setSaved(null); setSavedAt(null); }
   }, [phase, teams, order, done, results, chooser, turnOrder, random]); // eslint-disable-line react-hooks/exhaustive-deps
+  const xpState = { order: xpOrder, done: xpDone, results: xpResults };
+  useEffect(() => {
+    if (DEMO || DEMO_XP) return;
+    if (phase === 'xpboard') { if (writeXpSave(xpState)) setXpSavedAt(Date.now()); }
+    else if (phase === 'xpend') { clearXpSave(); setXpSaved(null); setXpSavedAt(null); }
+  }, [phase, xpOrder, xpDone, xpResults]); // eslint-disable-line react-hooks/exhaustive-deps
+  const startXp = () => { setXpOrder(shuffle(XP_QUESTIONS)); setXpDone(new Set()); setXpResults({}); setXpCur(null); setPhase('xpboard'); };
+  const resumeXp = (g) => { setXpOrder(g.order); setXpDone(g.done); setXpResults(g.results); setXpCur(null); setPhase(g.done.size >= XP_TOTAL ? 'xpend' : 'xpboard'); };
+  const exitXp = () => { writeXpSave(xpState); setXpSaved(readXpSave()); setXpSavedAt(null); setPhase('intro'); };
+  const finishXp = (result) => {
+    const nd = new Set(xpDone); nd.add(xpCur); setXpDone(nd);
+    setXpResults((r) => ({ ...r, [xpCur]: result }));
+    setXpCur(null);
+    setPhase(nd.size >= XP_TOTAL ? 'xpend' : 'xpboard');
+  };
   const resume = (g) => {
     setTeams(g.teams); setOrder(g.order); setDone(g.done); setResults(g.results); setChooser(g.chooser);
     setTurnOrder(g.turnOrder); setRandom(g.random); setCur(null); setPhase(g.done.size >= g.order.length ? 'final' : 'board');
@@ -101,12 +130,15 @@ export default function App() {
   };
 
   const screen = {
-    intro: <Intro saved={saved} onNext={() => setPhase('setup')} onResume={resume} onDiscard={() => { clearSave(); setSaved(null); }} />,
+    intro: <Intro saved={saved} onNext={() => setPhase('setup')} onResume={resume} onDiscard={() => { clearSave(); setSaved(null); }} xpSaved={xpSaved} onStartXp={startXp} onResumeXp={resumeXp} onDiscardXp={() => { clearXpSave(); setXpSaved(null); }} />,
     setup: <Setup initial={teams} random={random} onBack={() => setPhase('intro')} onStart={start} />,
     draw: <Draw teams={teams} onDone={drawn} />,
     board: <Board order={order} done={done} results={results} teams={teams} chooser={chooser} turnOrder={turnOrder} savedAt={savedAt} onExit={exitSaved} onDownload={() => downloadSave(state)} onChoose={setChooser} onPick={(i) => { setCur(i); setPhase('play'); }} onSummary={() => setPhase('final')} />,
     sample: <Play key="sample" q={SAMPLE} sample teams={teams} chooser={turnOrder ? turnOrder[0] : 0} onFinish={() => setPhase('board')} />,
     play: cur !== null ? <Play key={cur} q={order[cur] ?? SAMPLE} teams={teams} chooser={chooser ?? 0} onFinish={finishQ} preview={DEMO > 0} /> : null,
+    xpboard: <XpBoard order={xpOrder} done={xpDone} results={xpResults} savedAt={xpSavedAt} onPick={(i) => { setXpCur(i); setPhase('xpplay'); }} onExit={exitXp} onDownload={() => downloadXpSave(xpState)} onFinish={() => setPhase('xpend')} />,
+    xpplay: xpCur !== null ? <XpPlay key={xpCur} q={xpOrder[xpCur]} no={xpCur + 1} done={xpDone} onFinish={finishXp} onBack={DEMO_XP ? undefined : () => { setXpCur(null); setPhase('xpboard'); }} preview={DEMO_XP > 0} /> : null,
+    xpend: <XpEnd opened={xpDone.size} total={XP_TOTAL} correct={Object.values(xpResults).filter((r) => r === 'right').length} onAgain={startXp} onHome={() => setPhase('intro')} />,
     final: <Final teams={teams} opened={done.size} total={order.length} onAgain={reset} />,
   }[phase];
 
