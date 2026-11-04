@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Alert, Button, Popconfirm, Progress, Tag } from 'antd';
-import { BellFilled, BulbOutlined, CheckOutlined, CloseOutlined, EyeOutlined, GiftOutlined, PauseCircleFilled, PlayCircleFilled, ReloadOutlined } from '@ant-design/icons';
+import { BellFilled, BulbOutlined, CheckOutlined, CloseOutlined, EyeOutlined, GiftOutlined, PauseCircleFilled, PlayCircleFilled, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 import Confetti from './Confetti.jsx';
 import { XP_SCENES } from '../scenes/xpIndex.js';
 import { XP_TOTAL } from '../data/xpQuestions.js';
@@ -35,6 +35,7 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
     if (s.status === 'run') sfx.bell();
     dispatch({ type: 'toggle' });
   }, [s.status]);
+  const next = useCallback(() => { if (s.status === 'end') onFinish(s.outcome); }, [s.status, s.outcome, onFinish]);
   const right = useCallback(() => { if (s.status === 'held') { sfx.correct(); dispatch({ type: 'right' }); } }, [s.status]);
   const wrong = useCallback(() => { if (s.status === 'held') { sfx.wrong(); setShake((n) => n + 1); dispatch({ type: 'wrong' }); } }, [s.status]);
 
@@ -42,6 +43,7 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
     const h = (e) => {
       if (e.target.closest?.('button') && e.key === 'Enter') return;
       const k = e.key.toLowerCase();
+      if (e.key === 'Enter' || (k === 'n' && !e.ctrlKey && !e.metaKey && !e.altKey)) { next(); return; }
       if (e.key === ' ') { e.preventDefault(); if (!e.repeat) { document.activeElement?.blur?.(); stop(); } return; }
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (k === 'd') right();
@@ -50,7 +52,7 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
     };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
-  }, [stop, right, wrong]);
+  }, [stop, right, wrong, next]);
 
   const elapsedPct = Math.min(100, ((DURATION - s.left) / DURATION) * 100);
   const showCard = s.status === 'end' && (s.outcome === 'right' || s.revealed);
@@ -77,7 +79,7 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
                   {s.outcome === 'right' ? <Tag color="green" className="ac-tag">Đã đoán đúng</Tag> : <Tag color="red" className="ac-tag">Hết giờ, chưa ai đúng</Tag>}
                   <div className="ac-answer display">{q.answer}</div>
                   <div className="ac-explain">{q.explain}</div>
-                  <Button type="primary" size="large" className="cta" onClick={() => onFinish(s.outcome)}>Hộp quà tiếp theo</Button>
+                  <Button type="primary" size="large" className="cta" onClick={next}>Hộp quà tiếp theo</Button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -111,9 +113,15 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
           {HINT_AT.map((t) => <i key={t} style={{ left: `${(t / DURATION) * 100}%` }}><span>{t}s</span></i>)}
         </div>
 
-        <button type="button" className="xp-btn xp-stop" onClick={stop} disabled={s.status === 'end'}>
-          {s.status === 'held' ? <><PlayCircleFilled /> Chạy tiếp</> : <><BellFilled /> DỪNG CHUÔNG</>}
-        </button>
+        {s.status === 'end' ? (
+          <button type="button" className="xp-btn xp-stop xp-next" onClick={next} autoFocus>
+            <RightOutlined /> HỘP QUÀ TIẾP THEO
+          </button>
+        ) : (
+          <button type="button" className="xp-btn xp-stop" onClick={stop}>
+            {s.status === 'held' ? <><PlayCircleFilled /> Chạy tiếp</> : <><BellFilled /> DỪNG CHUÔNG</>}
+          </button>
+        )}
         {timeoutOpen ? (
           <div className="xp-row">
             <button type="button" className="xp-btn xp-ghost" onClick={() => dispatch({ type: 'replay' })}><ReloadOutlined /> Xem lại</button>
@@ -126,8 +134,8 @@ export default function XpPlay({ q, no, done = new Set(), onFinish, onBack, prev
           </div>
         )}
         <button type="button" className="xp-btn xp-ghost" onClick={() => setPeek((p) => !p)}><EyeOutlined /> {peek ? q.answer : 'Xem đáp án (A)'}</button>
-        <Popconfirm title="Bỏ câu này và về hộp quà?" description="Hộp quà này sẽ được mở lại từ đầu lần sau." okText="Về hộp quà" cancelText="Ở lại" onConfirm={onBack} disabled={!onBack}>
-          <button type="button" className="xp-btn xp-ghost" disabled={!onBack}><GiftOutlined /> Về hộp quà</button>
+        <Popconfirm title="Bỏ câu này và về hộp quà?" description="Hộp quà này sẽ được mở lại từ đầu lần sau." okText="Về hộp quà" cancelText="Ở lại" onConfirm={onBack} disabled={!onBack || s.status === 'end'}>
+          <button type="button" className="xp-btn xp-ghost" disabled={!onBack || s.status === 'end'}><GiftOutlined /> Về hộp quà</button>
         </Popconfirm>
       </motion.div>
 
