@@ -25,7 +25,8 @@ const initTeams = () => AVATAR_KINDS.slice(0, 4).map((a, i) => ({ id: i, name: `
 // Xem nhanh một câu: thêm ?cau=7 vào địa chỉ (dùng để kiểm tra hoạt ảnh)
 const DEMO = Number(new URLSearchParams(window.location.search).get('cau')) || 0;
 // Xem nhanh một cảnh của chế độ Xung phong, không tính giờ: ?xp=7
-const DEMO_XP = Number(new URLSearchParams(window.location.search).get('xp')) || 0;
+const DEMO_XP_RAW = Number(new URLSearchParams(window.location.search).get('xp')) || 0;
+const DEMO_XP = Number.isInteger(DEMO_XP_RAW) && DEMO_XP_RAW >= 1 && DEMO_XP_RAW <= XP_TOTAL ? DEMO_XP_RAW : 0;
 
 const THEME = {
   algorithm: theme.darkAlgorithm,
