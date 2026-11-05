@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, Typography } from 'antd';
+import { Button, Popconfirm, Typography } from 'antd';
 import { ArrowRightOutlined, FolderOpenOutlined, DeleteOutlined, BellFilled, EditOutlined, EyeOutlined, GiftOutlined, PauseCircleFilled, StarFilled } from '@ant-design/icons';
 import { sfx } from '../utils/sound.js';
 import { fmtTime, readFile } from '../utils/save.js';
+import { readXpFile } from '../utils/xpSave.js';
+import { XP_TOTAL } from '../data/xpQuestions.js';
 
 const TILE_COLORS = ['#7c5cff', '#3db8ff', '#2fd6a0', '#ffc83d', '#ff5c7a', '#ff9a3d'];
 const ROWS = ['Ô CHỮ', 'TINH NGHỊCH'];
@@ -17,7 +19,7 @@ const RULES = [
   [PauseCircleFilled, '#ff5c7a', 'Bấm vào đồng hồ để tạm dừng và cho các đội thêm thời gian.'],
 ];
 
-export default function Intro({ onNext, saved, onResume, onDiscard }) {
+export default function Intro({ onNext, saved, onResume, onDiscard, xpSaved = null, onStartXp, onResumeXp, onDiscardXp }) {
   let n = 0;
   const fileRef = useRef(null);
   const [bad, setBad] = useState(false);
@@ -26,7 +28,9 @@ export default function Intro({ onNext, saved, onResume, onDiscard }) {
     e.target.value = '';
     if (!f) return;
     const g = await readFile(f);
-    if (g) { setBad(false); sfx.open(); onResume(g); } else setBad(true);
+    if (g) { setBad(false); sfx.open(); onResume(g); return; }
+    const x = await readXpFile(f);
+    if (x) { setBad(false); sfx.open(); onResumeXp(x); } else setBad(true);
   };
   return (
     <div className="screen intro">
@@ -73,6 +77,17 @@ export default function Intro({ onNext, saved, onResume, onDiscard }) {
           <Button type="link" className="file-open" icon={<FolderOpenOutlined />} onClick={() => fileRef.current?.click()}>Mở file đã lưu</Button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={openFile} />
           {bad && <span className="file-bad">File không hợp lệ</span>}
+        </motion.div>
+        <motion.div className="xp-entry" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6 }}>
+          <div className="xp-entry-info">
+            <b>Chế độ Xung phong</b>
+            <span>{xpSaved ? `Có ván đang chơi dở: ${xpSaved.done.size}/${XP_TOTAL} hộp quà đã mở, lưu lúc ${fmtTime(xpSaved.savedAt)}.` : `${XP_TOTAL} hộp quà, từ vựng dễ hơn. Không chia đội, cả lớp xung phong đoán.`}</span>
+          </div>
+          {xpSaved && <Button type="primary" size="large" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => { sfx.open(); onResumeXp(xpSaved); }}>Chơi tiếp</Button>}
+          {xpSaved
+            ? <Popconfirm title="Bắt đầu ván mới?" description="Ván Xung phong đang lưu sẽ bị ghi đè." okText="Ván mới" cancelText="Giữ ván cũ" onConfirm={() => { sfx.open(); onStartXp(); }}><Button size="large">Ván mới</Button></Popconfirm>
+            : <Button size="large" onClick={() => { sfx.open(); onStartXp(); }}>Xung phong</Button>}
+          {xpSaved && <Button type="text" icon={<DeleteOutlined />} onClick={onDiscardXp} aria-label="Bỏ ván Xung phong đã lưu" title="Bỏ ván đã lưu" />}
         </motion.div>
       </div>
       <div className="intro-right">
