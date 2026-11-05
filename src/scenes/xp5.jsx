@@ -2,7 +2,7 @@ import { Svg, G, Sky, Cloud, Sparkle, useScene, C, st } from './kit.jsx';
 import { Kid, Sweat, Heart } from './kit2.jsx';
 import { Meadow, Elephant } from './art.jsx';
 import { Drop, TaroLeaf, LeafGood, LeafTorn, Bamboo as BambooP, Shoot as ShootP } from './props.jsx';
-import { Rabbit, Turtle, Dog, pop } from './xpkit.jsx';
+import { Rabbit, Turtle, Dog, pop, life } from './xpkit.jsx';
 
 /* ===== 21. Lên voi xuống chó: lúc đầu ngồi trên con voi cao, về sau chỉ còn cưỡi con chó nhỏ ===== */
 export function LenVoi({ running }) {
@@ -22,7 +22,7 @@ export function LenVoi({ running }) {
     tl.set('.lv-b', { opacity: 1 }, 4.0);
     tl.to('.lv-b-bob', { y: 1.2, duration: 0.35, yoyo: true, repeat: 9, ease: 'sine.inOut' }, 4.0);
     tl.to('.lv-b .tail', { rotation: 20, duration: 0.25, yoyo: true, repeat: 15, transformOrigin: '100% 100%' }, 4.0);
-    tl.fromTo('.lv-sw', { y: 0, opacity: 0 }, { y: 7, opacity: 1, duration: 0.7, stagger: 0.3, repeat: 3 }, 4.4);
+    life(tl, '.lv-sw', { y: 0 }, { y: 7, duration: 0.7, stagger: 0.3, repeat: 3 }, 4.4);
     tl.to('.lvb-k-head', { rotation: 10, duration: 0.5, yoyo: true, repeat: 5, transformOrigin: '50% 100%' }, 4.4);
   }, { loop: 8 });
   return (
@@ -53,7 +53,7 @@ export function NuocDoLaKhoai({ running }) {
   const ref = useScene(running, (tl) => {
     [0.2, 3.4].forEach((t0) => xs.forEach((x0, i) => {
       const d = x0 < 0 ? -1 : 1;
-      tl.fromTo(`.nd-d${i}`, { x: 80 + x0, y: 20, opacity: 1 }, { keyframes: [{ y: 46, duration: 0.7, ease: 'power1.in' }, { x: 80 + d * 44, y: 54, duration: 0.9, ease: 'sine.in' }, { y: 84, opacity: 0, duration: 0.6, ease: 'power1.in' }], duration: 2.2 }, t0 + i * 0.5);
+      tl.fromTo(`.nd-d${i}`, { x: 80 + x0, y: 20, opacity: 0 }, { keyframes: [{ y: 46, opacity: 1, duration: 0.7, ease: 'power1.in' }, { x: 80 + d * 44, y: 54, duration: 0.9, ease: 'sine.in' }, { y: 84, opacity: 0, duration: 0.6, ease: 'power1.in' }], duration: 2.2 }, t0 + i * 0.5);
     }));
     tl.to('.nd-leaf', { rotation: 2.2, duration: 0.3, yoyo: true, repeat: 17, ease: 'sine.inOut', transformOrigin: '50% 100%' }, 0.8);
     tl.fromTo('.nd-spk', { opacity: 0 }, { opacity: 1, duration: 0.4, yoyo: true, repeat: 5, stagger: 0.5 }, 1);
@@ -73,11 +73,11 @@ export function NuocDoLaKhoai({ running }) {
 /* ===== 23. Lá lành đùm lá rách: chiếc lá lành che chở cho chiếc lá rách bên cạnh ===== */
 export function LaLanh({ running }) {
   const ref = useScene(running, (tl) => {
-    tl.fromTo('.ll-a', { y: 8, opacity: 1 }, { y: 42, opacity: 0.2, duration: 0.6, stagger: 0.2, repeat: 3, ease: 'power1.in' }, 0.3);
+    life(tl, '.ll-a', { y: 8 }, { y: 42, duration: 0.6, stagger: 0.2, repeat: 3, ease: 'power1.in' }, 0.3);
     tl.to('.ll-torn', { rotation: 6, duration: 0.15, yoyo: true, repeat: 7, transformOrigin: '50% 0%' }, 0.8);
     tl.to('.ll-good', { x: 52, y: -4, rotation: 18, duration: 1, ease: 'sine.inOut' }, 3);
-    tl.fromTo('.ll-b', { y: 8, opacity: 1 }, { y: 28, opacity: 0.2, duration: 0.5, stagger: 0.18, repeat: 5, ease: 'power1.in' }, 4.2);
-    tl.fromTo('.ll-free', { y: 8, opacity: 1 }, { y: 82, opacity: 0.4, duration: 1.4, stagger: 0.35, repeat: 5, ease: 'none' }, 0);
+    life(tl, '.ll-b', { y: 8 }, { y: 28, duration: 0.5, stagger: 0.18, repeat: 5, ease: 'power1.in' }, 4.2);
+    life(tl, '.ll-free', { y: 8 }, { y: 82, duration: 1.4, stagger: 0.35, repeat: 5, ease: 'none' }, 0);
     pop(tl, '.ll-h0', 0, 0, 5.2, 0.4);
     pop(tl, '.ll-h1', 0, 0, 5.8, 0.4);
   }, { loop: 8 });

@@ -1,7 +1,7 @@
 import { Svg, G, Sky, Cloud, Sparkle, Ant, Tree, Bee, Frog, useScene, C, INK, st } from './kit.jsx';
 import { Kid, Bubble, Question, Sweat, Heart, walkCycle, mouth } from './kit2.jsx';
 import { Meadow } from './art.jsx';
-import { Rabbit, pop } from './xpkit.jsx';
+import { Rabbit, pop, life } from './xpkit.jsx';
 
 /* Cảnh chế độ Xung phong: mỗi cảnh là một vòng chuyển động ngắn, rõ nghĩa ngay, tự lặp (xem useScene, opts.loop). */
 
@@ -175,7 +175,7 @@ export function OmCay({ running }) {
     tl.to('.oc-q', { opacity: 0, duration: 0.3 }, 5.4);
     [22, 38, 118, 136, 148].forEach((x, i) => tl.fromTo(`.oc-g${i}`, { scaleY: 0.2, svgOrigin: '0 0' }, { scaleY: 1, svgOrigin: '0 0', duration: 3.6, ease: 'sine.out' }, 2.4 + i * 0.25));
     tl.to('.oc-k-head', { rotation: 8, duration: 0.8, yoyo: true, repeat: 7, ease: 'sine.inOut', transformOrigin: '50% 100%' }, 3.4);
-    tl.fromTo('.oc-sweat', { y: 0, opacity: 0 }, { y: 6, opacity: 1, duration: 0.8, repeat: 3, stagger: 0.3 }, 3.6);
+    life(tl, '.oc-sweat', { y: 0 }, { y: 6, duration: 0.8, repeat: 3, stagger: 0.3 }, 3.6);
   }, { loop: 8 });
   return (
     <Svg ref={ref}>

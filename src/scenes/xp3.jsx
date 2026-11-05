@@ -2,7 +2,7 @@ import { Svg, G, Sky, Cloud, Sparkle, Tree, Fish, useScene, C, INK, st } from '.
 import { Kid, Exclaim, Question, walkCycle, mouth } from './kit2.jsx';
 import { Meadow, Elephant, Deer } from './art.jsx';
 import { Mouse, Drop } from './props.jsx';
-import { Rabbit, Croc, Flame, pop } from './xpkit.jsx';
+import { Rabbit, Croc, Flame, pop, life } from './xpkit.jsx';
 
 /* ===== 11. Đầu voi đuôi chuột: nửa trước là voi to, nửa sau chỉ là con chuột bé tí ===== */
 export function DauVoi({ running }) {
@@ -41,7 +41,7 @@ export function RutDay({ running }) {
     tl.to('.rd-k-armR', { rotation: 150, duration: 0.5, ease: 'power2.in', transformOrigin: '50% 0%' }, 1.4);
     tl.fromTo('.rd-vine', { rotation: 0, svgOrigin: '74 0' }, { rotation: 7, svgOrigin: '74 0', duration: 0.3, yoyo: true, repeat: 5, ease: 'sine.inOut' }, 1.8);
     trees.forEach(([x, y], i) => tl.to(`.rd-t${i}`, { rotation: i % 2 ? 4 : -4, svgOrigin: '0 15', duration: 0.18, yoyo: true, repeat: 11, ease: 'sine.inOut' }, 2.2 + i * 0.1));
-    tl.fromTo('.rd-leaf', { y: 0, opacity: 0 }, { y: 34, x: 8, opacity: 1, duration: 1.2, stagger: 0.15, repeat: 2, ease: 'none' }, 2.3);
+    life(tl, '.rd-leaf', { y: 0 }, { y: 34, x: 8, duration: 1.2, stagger: 0.15, repeat: 2, ease: 'none' }, 2.3);
     pop(tl, '.rd-ex', 0, 0, 2.6, 0.3);
     tl.set('.rd-deer', { opacity: 1 }, 2.7);
     tl.fromTo('.rd-deer', { x: 0 }, { x: 110, duration: 2.6, ease: 'power1.in' }, 2.7);
@@ -103,10 +103,10 @@ export function ThemDau({ running }) {
 export function NuocMatCaSau({ running }) {
   const ref = useScene(running, (tl) => {
     tl.to('.nm-c .jaw-dn', { rotation: 12, svgOrigin: '10 -1', duration: 0.35, yoyo: true, repeat: 17, ease: 'sine.inOut' }, 0);
-    tl.fromTo('.nm-tear', { y: 0, opacity: 0 }, { y: 16, opacity: 1, duration: 0.9, stagger: 0.45, repeat: 6, ease: 'power1.in' }, 0.2);
+    life(tl, '.nm-tear', { y: 0 }, { y: 16, duration: 0.9, stagger: 0.45, repeat: 6, ease: 'power1.in' }, 0.2);
     tl.to('.nm-fish', { rotation: 6, duration: 0.35, yoyo: true, repeat: 17, svgOrigin: '0 0' }, 0);
     tl.to('.nm-c .tail', { rotation: 6, duration: 0.7, yoyo: true, repeat: 9, ease: 'sine.inOut', transformOrigin: '100% 50%' }, 0);
-    tl.fromTo('.nm-bub', { y: 0, opacity: 0 }, { y: -14, opacity: 1, duration: 1.2, stagger: 0.5, repeat: 4, ease: 'none' }, 0);
+    life(tl, '.nm-bub', { y: 0 }, { y: -14, duration: 1.2, stagger: 0.5, repeat: 4, ease: 'none' }, 0);
   }, { loop: 7 });
   return (
     <Svg ref={ref}>

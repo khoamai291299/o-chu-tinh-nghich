@@ -46,11 +46,19 @@ test('từ chối order thiếu, trùng, mode hoặc version sai', () => {
 test('done lọc chỉ số sai, results bỏ khóa ngoài done và giá trị lạ', () => {
   const ok = packXp(base());
   const g = unpackXp({ ...ok, done: [0, 99, -1, 2.5, 3], results: { 0: 'right', 3: 'x', 7: 'right' } });
-  assert.deepEqual([...g.done].sort(), [0, 3]);
+  assert.deepEqual([...g.done].sort(), [0]); // ô 3 có kết quả lạ nên coi như chưa mở
   assert.deepEqual(g.results, { 0: 'right' });
 });
 
 test('readXpSave trả null khi storage ném lỗi hoặc JSON hỏng', () => {
   assert.equal(readXpSave({ getItem: () => { throw new Error('x'); } }), null);
   assert.equal(readXpSave({ getItem: () => '{hỏng' }), null);
+});
+
+test('ô đã mở nhưng kết quả lạ thì bỏ khỏi danh sách đã mở, không để ô lơ lửng', () => {
+  const d = packXp(base());
+  d.results = { 0: 'right', 3: 'lol' };
+  const g = unpackXp(d);
+  assert.deepEqual([...g.done], [0]);
+  assert.deepEqual(g.results, { 0: 'right' });
 });
