@@ -2,7 +2,7 @@ import { Svg, G, Sky, Cloud, Sparkle, Fish, useScene, C, INK, st } from './kit.j
 import { Kid, Room, Question, Exclaim, Sweat, Heart, mouth } from './kit2.jsx';
 import { Meadow } from './art.jsx';
 import { Mouse, Jar, Needle } from './props.jsx';
-import { Cat, Buffalo, pop } from './xpkit.jsx';
+import { Cat, Buffalo, pop, life } from './xpkit.jsx';
 
 /* ===== 6. Vẽ rắn thêm chân: vẽ xong con rắn lại vẽ thêm bốn chân, thành con thằn lằn ===== */
 export function VeRanChan({ running }) {
@@ -18,7 +18,7 @@ export function VeRanChan({ running }) {
     mouth(tl, 'vr-k', 'O', 5.8);
     pop(tl, '.vr-q', 0, 0, 5.8, 0.4);
     tl.to('.vr-k-head', { rotation: -8, duration: 0.3, yoyo: true, repeat: 3, transformOrigin: '50% 100%' }, 5.8);
-    tl.fromTo('.vr-sweat', { y: 0, opacity: 0 }, { y: 6, opacity: 1, duration: 0.6, repeat: 2, stagger: 0.3 }, 6);
+    life(tl, '.vr-sweat', { y: 0 }, { y: 6, duration: 0.6, repeat: 2, stagger: 0.3 }, 6);
   }, { loop: 8 });
   const d = `M${pts.map((p) => p.join(' ')).join(' L')}`;
   return (
@@ -102,8 +102,8 @@ export function ChuotChinh({ running }) {
     tl.fromTo('.cc-mouse', { y: -70, opacity: 1 }, { y: 0, duration: 0.9, ease: 'bounce.out' }, 0.4);
     tl.to('.cc-pile', { y: -1.6, duration: 0.2, yoyo: true, repeat: 1 }, 1.3);
     tl.to('.cc-mouse', { y: -2.4, duration: 0.25, yoyo: true, repeat: 15, ease: 'sine.inOut' }, 1.6);
-    tl.fromTo('.cc-grain', { y: 0, opacity: 0 }, { y: -10, opacity: 1, duration: 0.6, stagger: 0.25, repeat: 3, repeatDelay: 0.1, ease: 'power1.out' }, 1.4);
-    tl.fromTo('.cc-heart', { y: 0, opacity: 0 }, { y: -12, opacity: 1, duration: 0.9, stagger: 0.6, repeat: 1 }, 2.2);
+    life(tl, '.cc-grain', { y: 0 }, { y: -10, duration: 0.6, stagger: 0.25, repeat: 3, repeatDelay: 0.1, ease: 'power1.out' }, 1.4);
+    life(tl, '.cc-heart', { y: 0 }, { y: -12, duration: 0.9, stagger: 0.6, repeat: 1 }, 2.2);
     tl.to('.cc-mouse .tail', { rotation: 16, duration: 0.3, yoyo: true, repeat: 15, transformOrigin: '100% 100%' }, 1.4);
   }, { loop: 7 });
   return (
@@ -136,7 +136,7 @@ export function MoKim({ running }) {
     tl.fromTo('.mkim-arm', { rotation: -75 }, { rotation: -30, duration: 1.8, yoyo: true, repeat: 3, ease: 'sine.inOut', transformOrigin: '50% 0%' }, 0.3);
     tl.to('.mkim-k-head', { rotation: 8, duration: 0.9, yoyo: true, repeat: 7, transformOrigin: '50% 100%' }, 0);
     tl.to('.mkim-fish', { x: -190, duration: 7, ease: 'none' }, 0);
-    tl.fromTo('.mkim-bub', { y: 0, opacity: 0 }, { y: -26, opacity: 1, duration: 1.3, stagger: 0.4, repeat: 4, ease: 'none' }, 0);
+    life(tl, '.mkim-bub', { y: 0 }, { y: -26, duration: 1.3, stagger: 0.4, repeat: 4, ease: 'none' }, 0);
     tl.fromTo('.mkim-glint', { opacity: 0 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 9 }, 0.2);
     tl.to('.mkim-q', { opacity: 1, duration: 0.2 }, 0);
   }, { loop: 8 });

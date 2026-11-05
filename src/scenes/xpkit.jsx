@@ -141,3 +141,10 @@ export function Fly() {
 /** Hiện dần một vật bằng cách phóng to từ 0 quanh điểm (ox, oy). Toạ độ gốc tính trong hệ toạ độ của phần tử CHA (svgOrigin của GSAP),
  *  tức là toạ độ cục bộ của nhóm G bọc ngoài. Dùng gốc cố định vì gốc theo phần trăm của GSAP bị lệch khi scale bắt đầu từ 0. */
 export const pop = (tl, sel, ox, oy, at, dur = 0.4) => tl.fromTo(sel, { scale: 0, opacity: 0, svgOrigin: `${ox} ${oy}` }, { scale: 1, opacity: 1, duration: dur, ease: 'back.out(2.4)', svgOrigin: `${ox} ${oy}` }, at);
+
+/** Hạt trôi lặp (bọt, giọt, lá...): hiện mờ dần vào, rồi tan dần ra ở cuối mỗi nhịp để lần lặp không bị giật. */
+export const life = (tl, sel, from, to, at) => {
+  tl.set(sel, { opacity: 0 }, 0);
+  tl.fromTo(sel, from, to, at);
+  tl.to(sel, { keyframes: { opacity: [1, 1, 0], easeEach: 'none' }, duration: to.duration, stagger: to.stagger, repeat: to.repeat, repeatDelay: to.repeatDelay }, at);
+};

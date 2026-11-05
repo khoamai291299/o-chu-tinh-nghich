@@ -1,7 +1,7 @@
 import { Svg, G, Sky, Cloud, Sparkle, Fish, useScene, C, INK, st } from './kit.jsx';
 import { Heart, Question, Exclaim, Sweat } from './kit2.jsx';
 import { Meadow, Knife } from './art.jsx';
-import { Boat, Cat, Fly, pop } from './xpkit.jsx';
+import { Boat, Cat, Fly, pop, life } from './xpkit.jsx';
 
 /* ===== 16. Thuận buồm xuôi gió: thuyền buồm căng gió lướt nhanh trên mặt nước ===== */
 export function ThuanBuom({ running }) {
@@ -10,8 +10,8 @@ export function ThuanBuom({ running }) {
     tl.to('.tb-bob', { rotation: 3, y: 1.2, duration: 0.8, yoyo: true, repeat: 8, ease: 'sine.inOut', transformOrigin: '50% 100%' }, 0);
     tl.to('.tb-bob .sail', { scaleX: 1.08, duration: 0.6, yoyo: true, repeat: 11, ease: 'sine.inOut', transformOrigin: '0% 50%' }, 0);
     tl.to('.tb-w1', { x: -16, duration: 0.9, repeat: 7, ease: 'none' }, 0);
-    tl.to('.tb-w2', { x: -22, duration: 1.3, repeat: 5, ease: 'none' }, 0);
-    tl.fromTo('.tb-wind', { x: -10, opacity: 0 }, { x: 40, opacity: 1, duration: 1.4, stagger: 0.35, repeat: 3, ease: 'none' }, 0);
+    tl.to('.tb-w2', { x: -16, duration: 1.3, repeat: 5, ease: 'none' }, 0);
+    life(tl, '.tb-wind', { x: -10 }, { x: 40, duration: 1.4, stagger: 0.35, repeat: 3, ease: 'none' }, 0);
     tl.to('.tb-cloud', { x: 30, duration: 7, ease: 'none' }, 0);
     tl.to('.tb-gull', { x: 60, y: -6, duration: 7, ease: 'none' }, 0);
   }, { loop: 7 });
@@ -104,7 +104,7 @@ export function CaThot({ running }) {
     tl.to('.ct-knife', { y: 8, duration: 0.5, yoyo: true, repeat: 1, ease: 'power2.in' }, 3.6);
     tl.to('.ct-fish', { x: 0.9, duration: 0.05, yoyo: true, repeat: 99, ease: 'none' }, 0);
     tl.to('.ct-fish .tail', { rotation: 14, duration: 0.18, yoyo: true, repeat: 39, transformOrigin: '100% 50%' }, 0);
-    tl.fromTo('.ct-sw', { y: 0, opacity: 0 }, { y: 9, opacity: 1, duration: 0.8, stagger: 0.3, repeat: 5, ease: 'power1.in' }, 0.4);
+    life(tl, '.ct-sw', { y: 0 }, { y: 9, duration: 0.8, stagger: 0.3, repeat: 5, ease: 'power1.in' }, 0.4);
     pop(tl, '.ct-ex', 0, 0, 1.2, 0.3);
   }, { loop: 7 });
   return (
@@ -134,7 +134,7 @@ export function CaLon({ running }) {
     tl.to('.cl-m', { opacity: 0, duration: 0.2 }, 5.6);
     tl.fromTo('.cl-b', { x: -70 }, { keyframes: [{ x: 96, duration: 3, ease: 'power1.inOut' }, { x: 120, duration: 2.4, ease: 'none' }], duration: 5.4 }, 2.6);
     tl.fromTo('.cl-bp', { scale: 1 }, { scale: 1.1, duration: 0.3, yoyo: true, repeat: 1, transformOrigin: '50% 50%' }, 5.6);
-    tl.fromTo('.cl-bub', { y: 0, opacity: 0 }, { y: -16, opacity: 1, duration: 1.2, stagger: 0.4, repeat: 5, ease: 'none' }, 0);
+    life(tl, '.cl-bub', { y: 0 }, { y: -16, duration: 1.2, stagger: 0.4, repeat: 5, ease: 'none' }, 0);
     pop(tl, '.cl-spk', 0, 0, 2.3, 0.35);
     pop(tl, '.cl-spk2', 0, 0, 5.6, 0.35);
   }, { loop: 9 });

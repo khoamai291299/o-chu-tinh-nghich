@@ -296,6 +296,8 @@ i.mini-rank { position: absolute; top: -12px; left: -12px; width: 40px; height: 
 .xp-no { background: #ff5c7a; color: #fff; box-shadow: 0 6px 0 #b8344d; }
 .xp-ghost { background: #2d2970; color: #d6d2fa; box-shadow: 0 6px 0 #1c1950; font-weight: 700; font-size: 19px; height: 54px; padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xp-row { display: flex; gap: 14px; }
+.xp-row .xp-btn { white-space: nowrap; gap: 8px; font-size: 19px; padding: 0 8px; }
+.xp-next { font-size: 24px; white-space: nowrap; }
 .xp-board-main { position: absolute; left: 196px; top: 28px; width: 840px; }
 .xp-grid { display: grid; grid-template-columns: repeat(5, 130px); grid-template-rows: repeat(5, 130px); gap: 26px; margin-top: 36px; justify-content: center; }
 .xp-grid .cell { width: 130px; height: 130px; }

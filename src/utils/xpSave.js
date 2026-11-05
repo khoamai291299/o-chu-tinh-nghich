@@ -23,9 +23,9 @@ export const unpackXp = (d) => {
     const byId = new Map(XP_QUESTIONS.map((q) => [q.id, q]));
     if (!Array.isArray(d.order) || d.order.length !== XP_TOTAL || !d.order.every((id) => byId.has(id))) return null;
     if (new Set(d.order).size !== XP_TOTAL) return null;
-    const done = new Set((d.done || []).filter((i) => Number.isInteger(i) && i >= 0 && i < XP_TOTAL));
     const results = {};
-    for (const i of done) if (d.results && OK.has(d.results[i])) results[i] = d.results[i];
+    const done = new Set();
+    for (const i of d.done || []) if (Number.isInteger(i) && i >= 0 && i < XP_TOTAL && d.results && OK.has(d.results[i])) { done.add(i); results[i] = d.results[i]; }
     return { order: d.order.map((id) => byId.get(id)), done, results, savedAt: d.savedAt || null };
   } catch { return null; }
 };

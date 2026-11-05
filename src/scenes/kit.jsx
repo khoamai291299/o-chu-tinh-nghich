@@ -66,7 +66,12 @@ export function useScene(running, build, opts = {}) {
       if (opts.loop !== undefined) {
         if (opts.loop < 5) throw new Error('Cảnh phải lặp tối thiểu 5 giây');
         loopAt = opts.loop;
-        if (ref.current) ref.current.dataset.loop = String(loopAt);
+        if (ref.current) {
+          ref.current.dataset.loop = String(loopAt);
+          // Vào và ra cảnh bằng hiệu ứng mờ ngắn để điểm lặp không bị giật cục.
+          t.fromTo(ref.current, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power1.out', immediateRender: true }, 0);
+          t.to(ref.current, { opacity: 0, duration: 0.3, ease: 'power1.in' }, loopAt - 0.3);
+        }
       } else {
         let end = 0;
         t.getChildren(false, true, true).forEach((c) => { if (c.totalDuration() <= 14) end = Math.max(end, c.endTime()); });
@@ -74,6 +79,7 @@ export function useScene(running, build, opts = {}) {
       }
       t.call(() => t.seek(0), null, loopAt);
       tl.current = t;
+      if (import.meta.env?.DEV) (window.__tls ||= []).push({ t, svg: ref.current }); // chỉ để công cụ đo giật ở xp-preview
       t.play(0);
     }, ref);
     return () => ctx.revert();
