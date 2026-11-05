@@ -94,12 +94,13 @@ export function DeoCay({ running }) {
 /* ===== 3. Đường mật: lời nói ngọt ngào, đường và mật ong chảy ra từ miệng ===== */
 export function DuongMat({ running }) {
   const ref = useScene(running, (tl) => {
-    tl.set(['.dm-cube', '.dm-honey', '.dm-heart'], { opacity: 0 }, 0);
+    tl.set(['.dm-cube', '.dm-pot', '.dm-drop', '.dm-heart'], { opacity: 0 }, 0);
     pop(tl, '.dm-bub', -4, 36, 0.4, 0.5);
     tl.to('.dm-k-head', { rotation: 4, duration: 0.5, yoyo: true, repeat: 9, ease: 'sine.inOut', transformOrigin: '50% 100%' }, 0.4);
     ['O', 'S', 'O', 'S', 'O', 'S', 'O', 'S'].forEach((m, i) => mouth(tl, 'dm-k', m, 0.5 + i * 0.7));
     tl.fromTo('.dm-cube', { y: -14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'bounce.out', stagger: 0.35 }, 1.2);
-    tl.fromTo('.dm-honey', { attr: { height: 0 }, opacity: 1 }, { attr: { height: 20 }, duration: 1.6, ease: 'sine.inOut', stagger: 0.5 }, 1.8);
+    tl.fromTo('.dm-pot', { y: -6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)' }, 1.6);
+    ['.dm-drop-a', '.dm-drop-b', '.dm-drop-c'].forEach((d, i) => tl.fromTo(d, { y: 0, opacity: 1 }, { y: 14, opacity: 0, duration: 0.9, ease: 'power1.in' }, 2.3 + i * 0.9));
     tl.fromTo('.dm-heart', { y: 4, opacity: 0 }, { y: -10, opacity: 1, duration: 0.8, stagger: 0.4 }, 3.4);
     tl.to('.dm-bee', { keyframes: [{ x: 14, y: -8 }, { x: 4, y: -14 }, { x: -10, y: -4 }, { x: 8, y: 6 }, { x: 0, y: 0 }], duration: 4.4, ease: 'sine.inOut' }, 1.2);
   }, { loop: 7 });
@@ -114,8 +115,14 @@ export function DuongMat({ running }) {
             {[[0, 14], [10, 14], [20, 14], [5, 6], [15, 6]].map(([x, y], i) => (
               <g key={i} className="dm-cube" transform={`translate(${x} ${y})`}><rect x="-4.4" y="-4.4" width="8.8" height="8.8" rx="1.6" fill="#fff" {...st} strokeWidth=".6" /><path d="M-2.6 -2.6 H0" stroke="#bfe6ff" strokeWidth="1" strokeLinecap="round" /></g>
             ))}
-            {[2, 14, 26].map((x, i) => (
-              <g key={i} transform={`translate(${x} -16)`}><rect className="dm-honey" x="-2.4" y="0" width="4.8" height="0" rx="2.4" fill="#f4a521" {...st} strokeWidth=".5" /></g>
+            <g transform="translate(32 -14)"><g className="dm-pot">
+              <path d="M-7 0 Q-9 9 -4 11 H4 Q9 9 7 0 Z" fill="#f4a521" {...st} strokeWidth=".6" />
+              <rect x="-8" y="-3" width="16" height="3.4" rx="1.6" fill="#c97a12" {...st} strokeWidth=".6" />
+              <path d="M-4 3 Q-4 6 -2 7" stroke="#fff6c8" strokeWidth="1" strokeLinecap="round" fill="none" />
+            </g>
+            </g>
+            {[[29, 'a'], [32, 'b'], [35, 'c']].map(([x, k]) => (
+              <g key={k} transform={`translate(${x} -2)`}><path className={`dm-drop dm-drop-${k}`} d="M0 -2.4 Q2.6 1.4 0 3 Q-2.6 1.4 0 -2.4Z" fill="#f4a521" {...st} strokeWidth=".5" /></g>
             ))}
             {[6, 22].map((x, i) => <g key={i} transform={`translate(${x} -4)`}><g className="dm-heart"><Heart s={0.8} /></g></g>)}
           </G>

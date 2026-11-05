@@ -81,3 +81,12 @@ test('hintLevel theo mốc 15s và 25s', () => {
   assert.equal(at(24.9), 1);
   assert.equal(at(25), 2);
 });
+
+test('150 nhịp 0,1 giây cho đúng gợi ý 1 ở giây 15, không trễ vì sai số số thực', async () => {
+  const { initRound, roundReduce, hintLevel } = await import('../src/utils/xpRound.js');
+  let s = initRound();
+  for (let i = 0; i < 149; i++) s = roundReduce(s, { type: 'tick', dt: 0.1 });
+  assert.equal(hintLevel(s), 0);
+  s = roundReduce(s, { type: 'tick', dt: 0.1 });
+  assert.equal(hintLevel(s), 1);
+});

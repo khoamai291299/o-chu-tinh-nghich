@@ -9,8 +9,9 @@ export function roundReduce(s, a) {
   switch (a.type) {
     case 'tick': {
       if (s.status !== 'run') return s;
-      const left = Math.max(0, s.left - a.dt);
-      const spent = s.spent + a.dt;
+      const r = (x) => Math.round(x * 1000) / 1000; // tránh trôi số thực: 150 nhịp 0,1 giây phải đúng 15 giây
+      const left = Math.max(0, r(s.left - a.dt));
+      const spent = r(s.spent + a.dt);
       return left === 0 ? { ...s, left, spent, status: 'end', outcome: 'timeout' } : { ...s, left, spent };
     }
     case 'toggle':
